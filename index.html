@@ -181,12 +181,10 @@
     const cmToPx = cm => cm * 37.7953;
     const toPx = (val,u)=>!val?undefined:u==="in"?inchToPx(val):u==="cm"?cmToPx(val):val;
 
+    let convertCount = 1;
     let currentFile=null;
 
-    function clearStatus(){
-      status.style.display="none";
-    }
-
+    function clearStatus(){ status.style.display="none"; }
     formatEl.addEventListener("change",clearStatus);
     unitsEl.addEventListener("change",clearStatus);
 
@@ -222,8 +220,9 @@
     });
 
     resetBtn.addEventListener("click",()=>{
-      filesEl.value=""; preview.innerHTML=""; info.textContent=""; error.textContent="";
-      wEl.value=""; hEl.value=""; status.style.display="none";
+      filesEl.value=""; preview.innerHTML=""; info.textContent="";
+      error.textContent=""; wEl.value=""; hEl.value="";
+      convertCount=1; status.style.display="none";
     });
 
     async function fileToImage(f){
@@ -256,13 +255,15 @@
 
       for(const f of files){
         const isPDF=/pdf$/i.test(f.name), isIMG=/^image\//.test(f.type);
+        const base=f.name.replace(/\.[^.]+$/,"");
+        const suffix=`-conv${convertCount++}`;
         if(fmt==="pdf"&&isIMG){
           const img=await fileToImage(f);
           const W=w||img.width,H=h||img.height;
           const doc=new jsPDF({unit:"px",format:[W,H]});
           const cnv=await imageToCanvas(img,W,H);
           doc.addImage(cnv.toDataURL("image/jpeg",0.92),"JPEG",0,0,W,H);
-          downloadBlob(doc.output("blob"),f.name.replace(/\.[^.]+$/,"")+".pdf");
+          downloadBlob(doc.output("blob"),`${base}${suffix}.pdf`);
         } else if(isPDF&&fmt!=="pdf"){
           const ab=await f.arrayBuffer();
           const pdf=await pdfjsLib.getDocument({data:ab}).promise;
@@ -274,24 +275,21 @@
             cnv.width=vp.width; cnv.height=vp.height;
             await page.render({canvasContext:ctx,viewport:vp}).promise;
             const blob=await new Promise(r=>cnv.toBlob(r,"image/"+fmt,0.92));
-            downloadBlob(blob,f.name.replace(/\.[^.]+$/,"")+`-p${p}.`+fmt);
+            downloadBlob(blob,`${base}${suffix}-p${p}.${fmt}`);
           }
         } else if(isIMG&&fmt!=="pdf"){
           const img=await fileToImage(f);
           const W=w||img.width,H=h||img.height;
           const cnv=await imageToCanvas(img,W,H);
           const blob=await new Promise(r=>cnv.toBlob(r,"image/"+fmt,0.92));
-          downloadBlob(blob,f.name.replace(/\.[^.]+$/,"")+"."+fmt);
+          downloadBlob(blob,`${base}${suffix}.${fmt}`);
         } else {error.textContent="Unsupported conversion.";}
       }
       status.style.display="block";
     }
 
     convertBtn.addEventListener("click",convert);
-
-    if("serviceWorker" in navigator){
-      navigator.serviceWorker.register("service-worker.js");
-    }
+    if("serviceWorker" in navigator){ navigator.serviceWorker.register("service-worker.js"); }
   })();
   </script>
 </body>
