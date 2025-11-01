@@ -60,12 +60,16 @@
       border-radius: 10px;
       font-size: 15px;
     }
-    .row {
+    .resize-row {
       display: flex;
       gap: 10px;
+      align-items: center;
     }
-    .row input[type="number"] {
+    .resize-row input[type="number"] {
       flex: 1;
+    }
+    .resize-row select {
+      width: 80px;
     }
     button {
       width: 100%;
@@ -124,9 +128,14 @@
     </select>
 
     <label>Resize (optional)</label>
-    <div class="row">
-      <input type="number" id="width" placeholder="Width (px)" min="1">
-      <input type="number" id="height" placeholder="Height (px)" min="1">
+    <div class="resize-row">
+      <input type="number" id="width" placeholder="Width" min="1">
+      <input type="number" id="height" placeholder="Height" min="1">
+      <select id="units">
+        <option value="px">px</option>
+        <option value="in">in</option>
+        <option value="cm">cm</option>
+      </select>
     </div>
 
     <button id="convert">Convert & Download</button>
@@ -149,6 +158,7 @@
           formatEl = $("#format"),
           wEl = $("#width"),
           hEl = $("#height"),
+          unitsEl = $("#units"),
           preview = $("#preview"),
           info = $("#info"),
           error = $("#error"),
@@ -156,7 +166,17 @@
           resetBtn = $("#reset");
 
     let currentFile = null;
-    const MAX_SIZE = 8000; // px safety limit
+    const MAX_SIZE = 8000;
+
+    const inchToPx = inch => inch * 96;
+    const cmToPx = cm => cm * 37.7953;
+
+    function toPixels(value, unit) {
+      if (!value) return undefined;
+      if (unit === "in") return inchToPx(value);
+      if (unit === "cm") return cmToPx(value);
+      return value;
+    }
 
     filesEl.addEventListener("change", async e => {
       const file = e.target.files[0];
@@ -227,8 +247,9 @@
       const files = Array.from(filesEl.files||[]);
       if(!files.length){alert("Please choose a file.");return;}
       const fmt = formatEl.value;
-      const width = parseInt(wEl.value)||undefined;
-      const height = parseInt(hEl.value)||undefined;
+      const unit = unitsEl.value;
+      let width = toPixels(parseFloat(wEl.value), unit);
+      let height = toPixels(parseFloat(hEl.value), unit);
 
       if(width>MAX_SIZE||height>MAX_SIZE){
         error.textContent="⚠️ Size too large. Try smaller values.";
@@ -236,13 +257,11 @@
       }
 
       const isPDF = f => /pdf$/i.test(f.name);
-      const isIMG = f => /^image\\//.test(f.type);
-
+      const isIMG = f => /^image\//.test(f.type);
       const { jsPDF } = window.jspdf;
 
       for(const file of files){
         if(fmt==="pdf" && isIMG(file)){
-          // image → pdf
           const img=await fileToImage(file);
           const w=width||img.width;
           const h=height||img.height;
@@ -251,9 +270,8 @@
           const data=cnv.toDataURL("image/jpeg",0.92);
           doc.addImage(data,"JPEG",0,0,w,h);
           const blob=doc.output("blob");
-          downloadBlob(blob,file.name.replace(/\\.[^.]+$/,"")+".pdf");
+          downloadBlob(blob,file.name.replace(/\.[^.]+$/,"")+".pdf");
         } else if(isPDF(file) && fmt!=="pdf"){
-          // pdf → image(s)
           const ab=await file.arrayBuffer();
           const pdf=await pdfjsLib.getDocument({data:ab}).promise;
           for(let p=1;p<=pdf.numPages;p++){
@@ -265,16 +283,15 @@
             cnv.height=viewport.height;
             await page.render({canvasContext:ctx,viewport}).promise;
             const blob=await new Promise(r=>cnv.toBlob(r,"image/"+fmt,0.92));
-            downloadBlob(blob,file.name.replace(/\\.[^.]+$/,"")+`-p${p}.`+fmt);
+            downloadBlob(blob,file.name.replace(/\.[^.]+$/,"")+`-p${p}.`+fmt);
           }
         } else if(isIMG(file) && fmt!=="pdf"){
-          // image → image
           const img=await fileToImage(file);
           const w=width||img.width;
           const h=height||img.height;
           const cnv=await imageToCanvas(img,w,h);
           const blob=await new Promise(r=>cnv.toBlob(r,"image/"+fmt,0.92));
-          downloadBlob(blob,file.name.replace(/\\.[^.]+$/,"")+"."+fmt);
+          downloadBlob(blob,file.name.replace(/\.[^.]+$/,"")+"."+fmt);
         } else {
           error.textContent="Unsupported conversion.";
         }
