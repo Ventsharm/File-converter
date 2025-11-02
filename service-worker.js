@@ -1,11 +1,11 @@
-// --- Ventsharm Budget PWA Service Worker ---
-const CACHE_NAME = 'budget-cache-v1';
+// --- File Converter PWA Service Worker ---
+const CACHE_NAME = 'file-converter-cache-v1';
 const ASSETS = [
-  './',
-  './index.html',
-  './manifest.webmanifest',
-  './Icon-192.png',
-  './Icon-512.png'
+  '/File-converter/',
+  '/File-converter/index.html',
+  '/File-converter/manifest.webmanifest',
+  '/File-converter/Icon-192.png',
+  '/File-converter/Icon-512.png'
 ];
 
 self.addEventListener('install', e => {
