@@ -1,14 +1,22 @@
 {
   "name": "File Converter",
   "short_name": "Converter",
-  "description": "Convert JPG, PNG, WEBP, and PDF files offline.",
+  "description": "Convert images between JPG, PNG, WEBP, and PDF instantly.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
   "icons": [
-    { "src": "Icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "Icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
