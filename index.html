@@ -1,292 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>File Converter</title>
-  <link rel="icon" href="Icon-192.png" type="image/png" />
-  <style>
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: #f9f9f9;
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0;
-      padding: 20px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    header img {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-    }
-
-    header h1 {
-      font-size: 1.4em;
-      font-weight: 600;
-      margin: 0;
-    }
-
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      max-width: 480px;
-      width: 100%;
-    }
-
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 1em;
-      margin-bottom: 15px;
-      box-sizing: border-box;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-
-    #convert {
-      background: linear-gradient(90deg, #007bff, #0078e7);
-      color: white;
-      font-weight: 600;
-    }
-
-    #reset {
-      background: #eee;
-      margin-top: 8px;
-    }
-
-    #error {
-      color: red;
-      font-weight: 600;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    #status {
-      color: #1ba548;
-      font-weight: 600;
-      text-align: center;
-      display: none;
-      margin-top: 10px;
-    }
-
-    #info {
-      text-align: center;
-      color: #333;
-      font-weight: 500;
-      margin-bottom: 10px;
-    }
-
-    #preview img {
-      display: block;
-      max-width: 100%;
-      border-radius: 12px;
-      margin: 0 auto 15px auto;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>File Converter</title>
+<link rel="icon" href="Icon-192.png">
+<style>
+body{font-family:system-ui,sans-serif;background:#f5f6f8;display:flex;flex-direction:column;align-items:center;padding:30px 10px;color:#222}
+.app{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1);padding:25px 20px;width:100%;max-width:420px;box-sizing:border-box}
+h1{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.4rem;margin-bottom:20px}
+h1 img{width:28px;height:28px}
+label{font-weight:600;display:block;margin:15px 0 6px}
+input,select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #ccc;font-size:1rem;box-sizing:border-box}
+.row{display:flex;gap:10px}
+button{border:none;color:#fff;font-weight:600;cursor:pointer;transition:opacity .2s}
+button:hover{opacity:.9}
+.blue{background:linear-gradient(90deg,#007bff,#00aaff)}
+.gray{background:#ccc;color:#000}
+#status{display:none;text-align:center;color:#0a0;font-weight:600;margin-top:10px}
+#error{color:#e00;font-weight:500;margin:8px 0;text-align:center}
+#preview img{width:100%;border-radius:14px;margin-top:8px}
+#info{text-align:left;margin-top:5px;font-size:.9rem}
+</style>
 </head>
 <body>
-  <header>
-    <img src="Icon-192.png" alt="App Icon" />
-    <h1>File Converter</h1>
-  </header>
+<div class="app">
+<h1><img src="Icon-192.png" alt="icon"> File Converter</h1>
 
-  <div class="container">
-    <label for="files">Choose File</label>
-    <input type="file" id="files" accept="image/*,.pdf" multiple>
+<label>Choose File</label>
+<input id="files" type="file" accept="image/*,.pdf" multiple>
 
-    <label for="format">Output Format</label>
-    <select id="format">
-      <option value="jpg">JPEG (.jpg)</option>
-      <option value="png">PNG (.png)</option>
-      <option value="webp">WEBP (.webp)</option>
-      <option value="pdf">PDF (.pdf)</option>
-    </select>
+<label>Output Format</label>
+<select id="format">
+<option value="jpg">JPEG (.jpg)</option>
+<option value="png">PNG (.png)</option>
+<option value="webp">WEBP (.webp)</option>
+<option value="pdf">PDF (.pdf)</option>
+</select>
 
-    <label for="width">Resize (optional)</label>
-    <input type="number" id="width" placeholder="Width">
-    <input type="number" id="height" placeholder="Height">
-    <select id="units">
-      <option value="px">px</option>
-      <option value="in">in</option>
-      <option value="cm">cm</option>
-    </select>
+<label>Resize (optional)</label>
+<div class="row">
+<input id="width" type="number" placeholder="Width">
+<input id="height" type="number" placeholder="Height">
+</div>
+<select id="units">
+<option value="px">px</option>
+<option value="in">in</option>
+<option value="cm">cm</option>
+</select>
 
-    <button id="convert">Convert & Download</button>
-    <button id="reset">Reset</button>
+<div style="margin-top:18px;" class="row">
+<button id="convert" class="blue">Convert & Download</button>
+<button id="reset" class="gray">Reset</button>
+</div>
 
-    <div id="status">✅ Complete</div>
-    <div id="error"></div>
-    <div id="info"></div>
-    <div id="preview"></div>
-  </div><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.js"></script>
-  <script>
-  if (window.pdfjsLib) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.js";
+<div id="status">✅ Complete</div>
+<div id="error"></div>
+<div id="info"></div>
+<div id="preview"></div>
+</div><script>
+const $=s=>document.querySelector(s);
+const files=$("#files"),fmt=$("#format"),w=$("#width"),h=$("#height"),unit=$("#units");
+const info=$("#info"),preview=$("#preview"),err=$("#error"),status=$("#status");
+const MAX=8000,DPI=96;let counter=1;
+
+const cmToIn=cm=>cm/2.54,inToPx=i=>i*DPI,cmToPx=c=>c*(DPI/2.54);
+const toPx=(v,u)=>!isFinite(v)?undefined:u==="in"?inToPx(v):u==="cm"?cmToPx(v):v;
+
+function clear(){err.textContent="";status.style.display="none";}
+fmt.addEventListener("change",clear);unit.addEventListener("change",clear);
+
+files.addEventListener("change",e=>{
+  preview.innerHTML="";info.textContent="";err.textContent="";status.style.display="none";
+  const f=e.target.files[0];if(!f)return;
+  if(!f.type.startsWith("image/")){err.textContent="Please choose an image.";return;}
+  const u=URL.createObjectURL(f);const img=new Image();
+  img.onload=()=>{info.textContent=`Original size: ${img.width} × ${img.height}px`;
+    preview.appendChild(img);URL.revokeObjectURL(u);};
+  img.src=u;
+});
+
+$("#reset").addEventListener("click",()=>{files.value="";preview.innerHTML="";info.textContent="";
+  err.textContent="";w.value="";h.value="";counter=1;status.style.display="none";});
+
+async function fileToImage(f){const u=URL.createObjectURL(f);
+  const img=new Image();await new Promise(r=>{img.onload=r;img.src=u;});
+  URL.revokeObjectURL(u);return img;}
+
+async function imageToCanvas(img,W,H){const c=document.createElement("canvas");
+  c.width=W||img.width;c.height=H||img.height;
+  c.getContext("2d").drawImage(img,0,0,c.width,c.height);return c;}
+
+function download(blob,name){const u=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=u;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(u),4e3);}
+
+/* Manual PDF builder from your Firebase converter */
+function createPDF(canvas,w,h){
+  const data=canvas.toDataURL("image/jpeg",1);
+  const b64=data.split(",")[1],bin=atob(b64);
+  const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+  const enc=new TextEncoder(),parts=[];const add=t=>parts.push(enc.encode(t));
+  const wpt=(w/96)*72,hpt=(h/96)*72;
+  add("%PDF-1.4\n");
+  add(`1 0 obj\n<< /Type /XObject /Subtype /Image /Width ${w} /Height ${h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${u8.length} >>\nstream\n`);
+  parts.push(u8);add("\nendstream\nendobj\n");
+  const cont=`q\n${wpt} 0 0 ${hpt} 0 0 cm\n/Im0 Do\nQ\n`;
+  add(`2 0 obj\n<< /Length ${cont.length} >>\nstream\n${cont}endstream\nendobj\n`);
+  add(`3 0 obj\n<< /Type /Page /Parent 4 0 R /Resources << /XObject << /Im0 1 0 R >> >> /MediaBox [0 0 ${wpt} ${hpt}] /Contents 2 0 R >>\nendobj\n`);
+  add("4 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n5 0 obj\n<< /Type /Catalog /Pages 4 0 R >>\nendobj\n");
+  add("xref\n0 6\n0000000000 65535 f \n");
+  const pad=n=>String(n).padStart(10,"0");let off=0;const offs=[0];
+  for(const p of parts){offs.push(off+=p.length);}for(let i=1;i<=5;i++)add(`${pad(offs[i-1])} 00000 n \n`);
+  add(`trailer\n<< /Size 6 /Root 5 0 R >>\nstartxref\n${off}\n%%EOF`);
+  const total=parts.reduce((s,c)=>s+c.length,0);const out=new Uint8Array(total);
+  let pos=0;for(const p of parts){out.set(p,pos);pos+=p.length;}return new Blob([out],{type:"application/pdf"});
+}
+
+async function convert(){
+  err.textContent="";status.style.display="none";
+  const list=Array.from(files.files||[]);if(!list.length){alert("Please choose a file.");return;}
+  const format=fmt.value,u=unit.value,wv=parseFloat(w.value),hv=parseFloat(h.value);
+  for(const f of list){
+    const base=f.name.replace(/\.[^.]+$/,""),name=`${base}-conv${counter++}`;
+    const img=await fileToImage(f);
+    const W=toPx(wv,u)||img.width,H=toPx(hv,u)||img.height;
+    if(W>MAX||H>MAX){err.textContent="Size too large. Try smaller values.";preview.insertAdjacentElement("beforebegin",err);return;}
+    const cnv=await imageToCanvas(img,W,H);
+    if(format==="pdf"){const pdf=createPDF(cnv,W,H);download(pdf,`${name}.pdf`);}
+    else{const blob=await new Promise(r=>cnv.toBlob(r,"image/"+format,0.92));download(blob,`${name}.${format}`);}
   }
+  status.style.display="block";
+}
 
-  (function(){
-    const $ = s => document.querySelector(s);
-    const filesEl = $("#files"),
-          formatEl = $("#format"),
-          wEl = $("#width"),
-          hEl = $("#height"),
-          unitsEl = $("#units"),
-          preview = $("#preview"),
-          info = $("#info"),
-          error = $("#error"),
-          convertBtn = $("#convert"),
-          resetBtn = $("#reset"),
-          status = $("#status");
-
-    const MAX_SIZE = 8000;
-    const inchToPx = inch => inch * 96;
-    const cmToPx = cm => cm * 37.7953;
-    const toPx = (val,u)=>!val?undefined:u==="in"?inchToPx(val):u==="cm"?cmToPx(val):val;
-
-    let convertCount = 1;
-    let currentFile=null;
-
-    function clearStatus(){ status.style.display="none"; error.textContent=""; }
-    formatEl.addEventListener("change",clearStatus);
-    unitsEl.addEventListener("change",clearStatus);
-
-    filesEl.addEventListener("change", async e=>{
-      const file=e.target.files[0];
-      if(!file)return;
-      currentFile=file;
-      preview.innerHTML=""; info.textContent=""; error.textContent=""; status.style.display="none";
-
-      if(/pdf$/i.test(file.name)){
-        const buf=await file.arrayBuffer();
-        const pdf=await pdfjsLib.getDocument({data:buf}).promise;
-        const page=await pdf.getPage(1);
-        const vp=page.getViewport({scale:1});
-        const cnv=document.createElement("canvas");
-        const ctx=cnv.getContext("2d");
-        cnv.width=vp.width; cnv.height=vp.height;
-        await page.render({canvasContext:ctx,viewport:vp}).promise;
-        const img=new Image();
-        img.src=cnv.toDataURL();
-        info.textContent=`Original size: ${Math.round(vp.width)} × ${Math.round(vp.height)}px (PDF preview)`;
-        preview.appendChild(img);
-      } else {
-        const url=URL.createObjectURL(file);
-        const img=new Image();
-        img.onload=()=>{
-          info.textContent=`Original size: ${img.width} × ${img.height}px`;
-          preview.appendChild(img);
-          URL.revokeObjectURL(url);
-        };
-        img.src=url;
-      }
-    });
-
-    resetBtn.addEventListener("click",()=>{
-      filesEl.value=""; preview.innerHTML=""; info.textContent="";
-      error.textContent=""; wEl.value=""; hEl.value="";
-      convertCount=1; status.style.display="none";
-    });
-
-    async function fileToImage(f){
-      const u=URL.createObjectURL(f); const i=new Image();
-      await new Promise(r=>{i.onload=r; i.src=u;}); URL.revokeObjectURL(u);
-      return i;
-    }
-
-    async function imageToCanvas(i,w,h){
-      const c=document.createElement("canvas");
-      c.width=w||i.width; c.height=h||i.height;
-      c.getContext("2d").drawImage(i,0,0,c.width,c.height);
-      return c;
-    }
-
-    function downloadBlob(blob,name){
-      const u=URL.createObjectURL(blob);
-      const a=document.createElement("a"); a.href=u; a.download=name; a.click();
-      setTimeout(()=>URL.revokeObjectURL(u),4000);
-    }
-
-    async function convert(){
-      error.textContent=""; status.style.display="none";
-      const files=Array.from(filesEl.files||[]);
-      if(!files.length){alert("Please choose a file.");return;}
-      const fmt=formatEl.value, unit=unitsEl.value;
-      let w=toPx(parseFloat(wEl.value),unit), h=toPx(parseFloat(hEl.value),unit);
-      if(w>MAX_SIZE||h>MAX_SIZE){
-        error.textContent="Size too large. Try smaller values.";
-        // move red text above "Original size"
-        preview.insertAdjacentElement("beforebegin", error);
-        return;
-      }
-      const { jsPDF }=window.jspdf;
-
-      for(const f of files){
-        const isPDF=/pdf$/i.test(f.name), isIMG=/^image\//.test(f.type);
-        const base=f.name.replace(/\.[^.]+$/,"");
-        const suffix=`-conv${convertCount++}`;
-        if(fmt==="pdf"&&isIMG){
-          const img=await fileToImage(f);
-          const W=w||img.width,H=h||img.height;
-          const doc=new jsPDF({unit:"px",format:[W,H]});
-          const cnv=await imageToCanvas(img,W,H);
-          doc.addImage(cnv.toDataURL("image/jpeg",0.92),"JPEG",0,0,W,H);
-          downloadBlob(doc.output("blob"),`${base}${suffix}.pdf`);
-        } else if(isPDF&&fmt!=="pdf"){
-          const ab=await f.arrayBuffer();
-          const pdf=await pdfjsLib.getDocument({data:ab}).promise;
-          for(let p=1;p<=pdf.numPages;p++){
-            const page=await pdf.getPage(p);
-            const vp=page.getViewport({scale:1});
-            const cnv=document.createElement("canvas");
-            const ctx=cnv.getContext("2d");
-            cnv.width=vp.width; cnv.height=vp.height;
-            await page.render({canvasContext:ctx,viewport:vp}).promise;
-            const blob=await new Promise(r=>cnv.toBlob(r,"image/"+fmt,0.92));
-            downloadBlob(blob,`${base}${suffix}-p${p}.${fmt}`);
-          }
-        } else if(isIMG&&fmt!=="pdf"){
-          const img=await fileToImage(f);
-          const W=w||img.width,H=h||img.height;
-          const cnv=await imageToCanvas(img,W,H);
-          const blob=await new Promise(r=>cnv.toBlob(r,"image/"+fmt,0.92));
-          downloadBlob(blob,`${base}${suffix}.${fmt}`);
-        } else {error.textContent="Unsupported conversion.";}
-      }
-      status.style.display="block";
-    }
-
-    convertBtn.addEventListener("click",convert);
-    if("serviceWorker" in navigator){ navigator.serviceWorker.register("service-worker.js"); }
-  })();
-  </script>
+$("#convert").addEventListener("click",convert);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("service-worker.js");
+</script>
 </body>
 </html>
