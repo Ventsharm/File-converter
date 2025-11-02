@@ -1,160 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>File Converter</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#ffffff">
-  <link rel="icon" href="Icon-192.png">
+  <link rel="icon" href="Icon-192.png" type="image/png" />
   <style>
     body {
-      font-family: system-ui, -apple-system, Roboto, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #f9f9f9;
       color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
     }
+
     header {
-      background: #ffffff;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 10px;
-      padding: 16px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      margin-bottom: 15px;
     }
+
     header img {
       width: 36px;
       height: 36px;
       border-radius: 8px;
     }
+
     header h1 {
-      font-size: 20px;
-      margin: 0;
+      font-size: 1.4em;
       font-weight: 600;
+      margin: 0;
     }
-    main {
-      max-width: 600px;
-      margin: 30px auto;
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+    .container {
+      background: white;
       padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      max-width: 480px;
+      width: 100%;
     }
+
     label {
       font-weight: 600;
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    input[type="file"],
-    select,
-    input[type="number"] {
+
+    input, select {
       width: 100%;
       padding: 10px;
-      margin-bottom: 16px;
       border: 1px solid #ccc;
       border-radius: 10px;
-      font-size: 15px;
+      font-size: 1em;
+      margin-bottom: 15px;
+      box-sizing: border-box;
     }
-    .resize-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .resize-row input[type="number"] {
-      flex: 1;
-    }
-    .resize-row select {
-      width: 80px;
-    }
+
     button {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 1em;
       cursor: pointer;
-      margin-top: 4px;
     }
+
     #convert {
-      background: linear-gradient(135deg, #007bff, #3399ff);
-      color: #fff;
-    }
-    #reset {
-      background: #e0e0e0;
-      color: #333;
-    }
-    #status {
-      text-align: center;
-      margin-top: 12px;
+      background: linear-gradient(90deg, #007bff, #0078e7);
+      color: white;
       font-weight: 600;
-      color: green;
-      display: none;
     }
-    .preview {
-      text-align: center;
-      margin-top: 20px;
+
+    #reset {
+      background: #eee;
+      margin-top: 8px;
     }
-    .preview img {
-      max-width: 100%;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .info {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #555;
-      font-weight: 500;
-    }
-    .error {
+
+    #error {
       color: red;
       font-weight: 600;
-      margin-top: 6px;
       text-align: center;
+      margin-bottom: 10px;
+    }
+
+    #status {
+      color: #1ba548;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+      margin-top: 10px;
+    }
+
+    #info {
+      text-align: center;
+      color: #333;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    #preview img {
+      display: block;
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 0 auto 15px auto;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="Icon-192.png" alt="App icon">
+    <img src="Icon-192.png" alt="App Icon" />
     <h1>File Converter</h1>
   </header>
-  <main>
+
+  <div class="container">
     <label for="files">Choose File</label>
-    <input type="file" id="files" multiple accept="image/png,image/jpeg,image/webp,application/pdf">
+    <input type="file" id="files" accept="image/*,.pdf" multiple>
 
     <label for="format">Output Format</label>
     <select id="format">
-      <option value="png">PNG</option>
-      <option value="jpeg">JPG</option>
-      <option value="webp">WEBP</option>
-      <option value="pdf">PDF</option>
+      <option value="jpg">JPEG (.jpg)</option>
+      <option value="png">PNG (.png)</option>
+      <option value="webp">WEBP (.webp)</option>
+      <option value="pdf">PDF (.pdf)</option>
     </select>
 
-    <label>Resize (optional)</label>
-    <div class="resize-row">
-      <input type="number" id="width" placeholder="Width" min="1">
-      <input type="number" id="height" placeholder="Height" min="1">
-      <select id="units">
-        <option value="px">px</option>
-        <option value="in">in</option>
-        <option value="cm">cm</option>
-      </select>
-    </div>
+    <label for="width">Resize (optional)</label>
+    <input type="number" id="width" placeholder="Width">
+    <input type="number" id="height" placeholder="Height">
+    <select id="units">
+      <option value="px">px</option>
+      <option value="in">in</option>
+      <option value="cm">cm</option>
+    </select>
 
     <button id="convert">Convert & Download</button>
     <button id="reset">Reset</button>
 
     <div id="status">✅ Complete</div>
-    <div class="info" id="info"></div>
-    <div class="preview" id="preview"></div>
-    <div class="error" id="error"></div>
-  </main><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <div id="error"></div>
+    <div id="info"></div>
+    <div id="preview"></div>
+  </div><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.js"></script>
   <script>
   if (window.pdfjsLib) {
@@ -184,7 +175,7 @@
     let convertCount = 1;
     let currentFile=null;
 
-    function clearStatus(){ status.style.display="none"; }
+    function clearStatus(){ status.style.display="none"; error.textContent=""; }
     formatEl.addEventListener("change",clearStatus);
     unitsEl.addEventListener("change",clearStatus);
 
@@ -205,7 +196,7 @@
         await page.render({canvasContext:ctx,viewport:vp}).promise;
         const img=new Image();
         img.src=cnv.toDataURL();
-        info.textContent=`PDF – ${pdf.numPages} page${pdf.numPages>1?"s":""}`;
+        info.textContent=`Original size: ${Math.round(vp.width)} × ${Math.round(vp.height)}px (PDF preview)`;
         preview.appendChild(img);
       } else {
         const url=URL.createObjectURL(file);
@@ -250,7 +241,12 @@
       if(!files.length){alert("Please choose a file.");return;}
       const fmt=formatEl.value, unit=unitsEl.value;
       let w=toPx(parseFloat(wEl.value),unit), h=toPx(parseFloat(hEl.value),unit);
-      if(w>MAX_SIZE||h>MAX_SIZE){error.textContent="⚠️ Size too large. Try smaller values.";return;}
+      if(w>MAX_SIZE||h>MAX_SIZE){
+        error.textContent="Size too large. Try smaller values.";
+        // move red text above "Original size"
+        preview.insertAdjacentElement("beforebegin", error);
+        return;
+      }
       const { jsPDF }=window.jspdf;
 
       for(const f of files){
