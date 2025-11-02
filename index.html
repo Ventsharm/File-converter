@@ -1,65 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0d6efd">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>File Converter</title>
+
+<!-- Manifest + Icons -->
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="Icon-192.png">
+<meta name="theme-color" content="#0d6efd">
+
 <style>
-body{font-family:system-ui,sans-serif;background:#f5f6f8;display:flex;flex-direction:column;align-items:center;padding:30px 10px;color:#222}
-.app{background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1);padding:25px 20px;width:100%;max-width:420px;box-sizing:border-box}
-h1{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.4rem;margin-bottom:20px}
-h1 img{width:28px;height:28px}
-label{font-weight:600;display:block;margin:15px 0 6px}
-input,select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #ccc;font-size:1rem;box-sizing:border-box}
-.row{display:flex;gap:10px}
-button{border:none;color:#fff;font-weight:600;cursor:pointer;transition:opacity .2s}
-button:hover{opacity:.9}
-.blue{background:linear-gradient(90deg,#007bff,#00aaff)}
-.gray{background:#ccc;color:#000}
-#status{display:none;text-align:center;color:#0a0;font-weight:600;margin-top:10px}
-#error{color:#e00;font-weight:500;margin:8px 0;text-align:center}
-#preview img{width:100%;border-radius:14px;margin-top:8px}
-#info{text-align:left;margin-top:5px;font-size:.9rem}
+body {
+  font-family: system-ui, sans-serif;
+  background: #f5f6f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 10px;
+  color: #222;
+}
+.app {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
+  padding: 25px 20px;
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+}
+h1 img {
+  width: 28px;
+  height: 28px;
+}
+label {
+  font-weight: 600;
+  display: block;
+  margin: 15px 0 6px;
+}
+input, select, button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.row {
+  display: flex;
+  gap: 10px;
+}
+button {
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+button:hover { opacity: .9; }
+.blue {
+  background: linear-gradient(90deg, #007bff, #00aaff);
+}
+.gray {
+  background: #ccc;
+  color: #000;
+}
+#status {
+  display: none;
+  text-align: center;
+  color: #0a0;
+  font-weight: 600;
+  margin-top: 10px;
+}
+#error {
+  color: #e00;
+  font-weight: 500;
+  margin: 8px 0;
+  text-align: center;
+}
+#preview img {
+  width: 100%;
+  border-radius: 14px;
+  margin-top: 8px;
+}
+#info {
+  text-align: left;
+  margin-top: 5px;
+  font-size: .9rem;
+}
 </style>
 </head>
 <body>
+
 <div class="app">
-<h1><img src="Icon-192.png" alt="icon"> File Converter</h1>
+  <h1><img src="Icon-192.png" alt="icon"> File Converter</h1>
 
-<label>Choose File</label>
-<input id="files" type="file" accept="image/*,.pdf" multiple>
+  <label>Choose File</label>
+  <input id="files" type="file" accept="image/*,.pdf" multiple>
 
-<label>Output Format</label>
-<select id="format">
-<option value="jpg">JPEG (.jpg)</option>
-<option value="png">PNG (.png)</option>
-<option value="webp">WEBP (.webp)</option>
-<option value="pdf">PDF (.pdf)</option>
-</select>
+  <label>Output Format</label>
+  <select id="format">
+    <option value="jpg">JPEG (.jpg)</option>
+    <option value="png">PNG (.png)</option>
+    <option value="webp">WEBP (.webp)</option>
+    <option value="pdf">PDF (.pdf)</option>
+  </select>
 
-<label>Resize (optional)</label>
-<div class="row">
-<input id="width" type="number" placeholder="Width">
-<input id="height" type="number" placeholder="Height">
+  <label>Resize (optional)</label>
+  <div class="row">
+    <input id="width" type="number" placeholder="Width">
+    <input id="height" type="number" placeholder="Height">
+  </div>
+  <select id="units">
+    <option value="px">px</option>
+    <option value="in">in</option>
+    <option value="cm">cm</option>
+  </select>
+
+  <div style="margin-top:18px;" class="row">
+    <button id="convert" class="blue">Convert & Download</button>
+    <button id="reset" class="gray">Reset</button>
+  </div>
+
+  <div id="status">✅ Complete</div>
+  <div id="error"></div>
+  <div id="info"></div>
+  <div id="preview"></div>
 </div>
-<select id="units">
-<option value="px">px</option>
-<option value="in">in</option>
-<option value="cm">cm</option>
-</select>
 
-<div style="margin-top:18px;" class="row">
-<button id="convert" class="blue">Convert & Download</button>
-<button id="reset" class="gray">Reset</button>
-</div>
-
-<div id="status">✅ Complete</div>
-<div id="error"></div>
-<div id="info"></div>
-<div id="preview"></div>
-</div><script>
+<script>
 const $=s=>document.querySelector(s);
 const files=$("#files"),fmt=$("#format"),w=$("#width"),h=$("#height"),unit=$("#units");
 const info=$("#info"),preview=$("#preview"),err=$("#error"),status=$("#status");
@@ -135,11 +212,16 @@ async function convert(){
 }
 
 $("#convert").addEventListener("click",convert);
-if("serviceWorker" in navigator)navigator.serviceWorker.register("service-worker.js");
-</script><script>
+</script>
+
+<!-- Service Worker Registration -->
+<script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js', { scope: './' });
+  navigator.serviceWorker.register('/File-converter/service-worker.js', { scope: '/File-converter/' })
+  .then(() => console.log('✅ File Converter Service Worker Registered'))
+  .catch(err => console.error('SW registration failed:', err));
 }
 </script>
+
 </body>
 </html>
