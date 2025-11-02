@@ -2,7 +2,7 @@
   "name": "File Converter",
   "short_name": "Converter",
   "description": "Convert images between JPG, PNG, WEBP, and PDF instantly.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
