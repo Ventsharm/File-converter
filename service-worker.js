@@ -1,29 +1,10 @@
-// --- File Converter PWA Service Worker ---
-const CACHE_NAME = 'file-converter-cache-v1';
-const ASSETS = [
-  '/File-converter/',
-  '/File-converter/index.html',
-  '/File-converter/manifest.webmanifest',
-  '/File-converter/Icon-192.png',
-  '/File-converter/Icon-512.png'
-];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(res => res || fetch(e.request))
-  );
-});
+/* Retires the previous File Converter web worker; no Firebase or push code. */
+self.addEventListener('install',()=>self.skipWaiting());
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+ const scope=self.registration.scope;
+ for(const key of await caches.keys())if(key.startsWith('file-converter-cache-'))await caches.delete(key);
+ for(const notification of await self.registration.getNotifications())notification.close();
+ await self.clients.claim();
+ await self.registration.unregister();
+ for(const client of await self.clients.matchAll({type:'window'}))if(client.url.startsWith(scope))await client.navigate(client.url);
+})()));
